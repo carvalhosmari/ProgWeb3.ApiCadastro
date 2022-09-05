@@ -1,9 +1,12 @@
 ﻿using System.Data.SqlClient;
 using Dapper;
+using Microsoft.Extensions.Configuration;
+using ProgWeb3.ApiCadastro.Core.Interface;
+using ProgWeb3.ApiCadastro.Core.Model;
 
-namespace ProgWeb3.ApiCadastro.Repository
+namespace ProgWeb3.ApiCadastro.Infra.Data.Repository
 {
-    public class RepositorioCliente
+    public class RepositorioCliente : IRepositorioCliente
     {
         private readonly IConfiguration _configuration;
 
@@ -40,7 +43,7 @@ namespace ProgWeb3.ApiCadastro.Repository
             var parameter = new DynamicParameters();
             parameter.Add("nome", cliente.Nome);
             parameter.Add("cpf", cliente.Cpf);
-            parameter.Add("dataNascimento", cliente.DataNasc);
+            parameter.Add("dataNascimento", cliente.DataNascimento);
             parameter.Add("idade", cliente.Idade);
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));
@@ -58,7 +61,7 @@ namespace ProgWeb3.ApiCadastro.Repository
             parameter.Add("id", id);
             parameter.Add("nome", cliente.Nome);
             parameter.Add("cpf", cliente.Cpf);
-            parameter.Add("dataNascimento", cliente.DataNasc);
+            parameter.Add("dataNascimento", cliente.DataNascimento);
             parameter.Add("idade", cliente.Idade);
 
             using var conn = new SqlConnection(_configuration.GetConnectionString("DefaultConnection"));

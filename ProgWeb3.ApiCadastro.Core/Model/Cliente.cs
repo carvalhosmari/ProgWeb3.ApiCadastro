@@ -1,6 +1,6 @@
 using System.ComponentModel.DataAnnotations;
 
-namespace ProgWeb3.ApiCadastro
+namespace ProgWeb3.ApiCadastro.Core.Model
 {
     public class Cliente
     {
@@ -14,7 +14,7 @@ namespace ProgWeb3.ApiCadastro
         public string Cpf { get; set; }
 
         [Required(ErrorMessage = "Data é obrigatória!")]
-        public DateTime DataNasc { get; set; }
+        public DateTime DataNascimento { get; set; }
 
 
         public int Idade => CalculaIdade();
@@ -22,9 +22,9 @@ namespace ProgWeb3.ApiCadastro
 
         public int CalculaIdade()
         {
-            var idade = DateTime.Now.Year - DataNasc.Year;
+            var idade = DateTime.Now.Year - DataNascimento.Year;
 
-            if (DataNasc.DayOfYear > DateTime.Now.DayOfYear)
+            if (DataNascimento.DayOfYear > DateTime.Now.DayOfYear)
             {
                 idade--;
             }

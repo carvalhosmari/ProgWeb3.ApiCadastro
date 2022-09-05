@@ -1,5 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
-using ProgWeb3.ApiCadastro.Repository;
+using ProgWeb3.ApiCadastro.Core.Interface;
+using ProgWeb3.ApiCadastro.Core.Model;
 
 namespace ProgWeb3.ApiCadastro.Controllers
 {
@@ -9,24 +10,18 @@ namespace ProgWeb3.ApiCadastro.Controllers
     [Produces("application/json")]
     public class ClienteController : ControllerBase
     {
-        private readonly ILogger<ClienteController> _logger;
+        public IClienteService _clienteService;
 
-        public List<Cliente> Clientes { get; set; }
-
-        public RepositorioCliente _repoCliente;
-
-        public ClienteController(IConfiguration configuration)
+        public ClienteController(IClienteService clienteService)
         {
-            Clientes = new List<Cliente>();
-            _repoCliente = new RepositorioCliente(configuration);
-
+            _clienteService = clienteService;
         }
 
         [HttpGet("/clientes/consultar")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         public ActionResult<List<Cliente>> Get()
         {
-            return Ok(_repoCliente.Get());
+            return Ok(_clienteService.Get());
         }
 
         [HttpGet("/cliente/{cpf}/consultar")]
@@ -34,12 +29,12 @@ namespace ProgWeb3.ApiCadastro.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<List<Cliente>> Get2(string cpf)
         {
-            if (_repoCliente.Get2(cpf) == null)
+            if (_clienteService.Get2(cpf) == null)
             {
                 return NotFound();
             }
 
-            return Ok(_repoCliente.Get2(cpf));
+            return Ok(_clienteService.Get2(cpf));
         }
 
         [HttpPost("/cliente/inserir")]
@@ -47,7 +42,7 @@ namespace ProgWeb3.ApiCadastro.Controllers
         [ProducesResponseType(StatusCodes.Status201Created)]
         public ActionResult<Cliente> Insert([FromBody] Cliente novoCliente)
         {
-            if (!_repoCliente.Insert(novoCliente))
+            if (!_clienteService.Insert(novoCliente))
             {
                 return BadRequest();
             }
@@ -61,7 +56,7 @@ namespace ProgWeb3.ApiCadastro.Controllers
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IActionResult Update(string cpf, Cliente clienteAtualizado)
         {
-            if (!_repoCliente.Update(_repoCliente.GetId(cpf), clienteAtualizado))
+            if (!_clienteService.Update(_clienteService.GetId(cpf), clienteAtualizado))
             {
                 return NotFound();
             }
@@ -74,7 +69,7 @@ namespace ProgWeb3.ApiCadastro.Controllers
         [ProducesResponseType(StatusCodes.Status204NoContent)]
         public IActionResult Delete(string cpf)
         {
-            if (!_repoCliente.Delete(_repoCliente.GetId(cpf)))
+            if (!_clienteService.Delete(_clienteService.GetId(cpf)))
             {
                 return NotFound();
             }
