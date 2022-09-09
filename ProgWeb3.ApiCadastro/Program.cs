@@ -1,5 +1,7 @@
+using Microsoft.AspNetCore.Mvc.Filters;
 using ProgWeb3.ApiCadastro.Core.Interface;
 using ProgWeb3.ApiCadastro.Core.Service;
+using ProgWeb3.ApiCadastro.Filters;
 using ProgWeb3.ApiCadastro.Infra.Data.Repository;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -11,8 +13,15 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddMvc(options =>
+{
+    options.Filters.Add<GeneralExceptionFilter>();
+});
+
 builder.Services.AddScoped<IClienteService, ClienteService>();
 builder.Services.AddScoped<IRepositorioCliente, RepositorioCliente>();
+builder.Services.AddScoped<CpfExisteActionFilter>();
+builder.Services.AddScoped<ValidaUpdateActionFilter>();
 
 var app = builder.Build();
 

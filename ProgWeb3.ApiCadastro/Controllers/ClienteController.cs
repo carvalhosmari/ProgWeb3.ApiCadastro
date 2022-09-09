@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using ProgWeb3.ApiCadastro.Core.Interface;
 using ProgWeb3.ApiCadastro.Core.Model;
+using ProgWeb3.ApiCadastro.Filters;
 
 namespace ProgWeb3.ApiCadastro.Controllers
 {
@@ -8,6 +9,7 @@ namespace ProgWeb3.ApiCadastro.Controllers
     [Route("[controller]")]
     [Consumes("application/json")]
     [Produces("application/json")]
+    [TypeFilter(typeof(LogTempoExecucaoResourceFilter))]
     public class ClienteController : ControllerBase
     {
         public IClienteService _clienteService;
@@ -40,6 +42,8 @@ namespace ProgWeb3.ApiCadastro.Controllers
         [HttpPost("/cliente/inserir")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status201Created)]
+        [ProducesResponseType(StatusCodes.Status409Conflict)]
+        [ServiceFilter(typeof(CpfExisteActionFilter))]
         public ActionResult<Cliente> Insert([FromBody] Cliente novoCliente)
         {
             if (!_clienteService.Insert(novoCliente))
@@ -53,13 +57,11 @@ namespace ProgWeb3.ApiCadastro.Controllers
         [HttpPut("/cliente/{cpf}/atualizar")]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status204NoContent)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        [ServiceFilter(typeof(ValidaUpdateActionFilter))]
         public IActionResult Update(string cpf, Cliente clienteAtualizado)
         {
-            if (!_clienteService.Update(_clienteService.GetId(cpf), clienteAtualizado))
-            {
-                return NotFound();
-            }
+            _clienteService.Update(_clienteService.GetId(cpf), clienteAtualizado);
 
             return NoContent();
         }
